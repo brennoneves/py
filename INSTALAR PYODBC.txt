@@ -1,0 +1,57 @@
+vscode://github.vscode-pull-request-github/did-authenticate?windowId=1&code=5299e7abde1d2d1cf427&state=5a41b256-acda-464c-b7b3-e9e7153e05da
+
+CMD.EXE COMO ADMINISTRADOR
+C:\Users\quarto\AppData\Local\Programs\Python\Python38\Scripts>pip install pyodbc
+
+
+###################CONEXAO #########################################
+import pyodbc
+
+def retornar_conexao_sql():
+    server = ".\SQLEXPRESS"
+    database = "STAGE_AREA"
+    username = "SA"
+    password ="ERPM"
+    string_conexao='Driver={SQL Server Native Client 11.0};Server='+server+';Database='+database+';Trusted_Connection=yes;'
+    return pyodbc.connect(string_conexao)
+    #return conexao.cursor()
+
+#CRIAR CONEXAO COM O BANCO
+conexao = retornar_conexao_sql()
+
+#BUSCAR OS DADOS UM POR UM COM FETCHONE()
+cursor=conexao.cursor()
+cursor.execute("select empresa_usuaria,nome from STG_LOJAS")
+empresa=0
+while True:
+    row = cursor.fetchone()
+    if not row:
+        break
+    empresa=int(row.empresa_usuaria)
+    print(row.nome)
+    print(row.empresa_usuaria)
+    if empresa ==273:
+        print('entrou')
+    print(empresa)
+
+#CRUD SELECT TRAZ TODAS AS LINHAS
+sql_select = "SELECT * FROM STG_VENDEDORES "
+cursor.execute(sql_select)
+linhas=cursor.fetchall()
+for linha in linhas:
+    print(linha)
+
+#CRUD --INSERT
+sql_insert="insert into STG_VENDEDORES (NOME,EMPRESA_USUARIA) values ('BRENNO',333)"
+cursor.execute(sql_insert)
+conexao.commit()
+
+#CRUD --UPDATE
+sql_update="update STG_VENDEDORES set nome='teste' where VENDEDOR=410"
+cursor.execute(sql_update)
+conexao.commit()
+
+#crud -- delete 
+sql_delete="delete from STG_VENDEDORES where VENDEDOR=410"
+cursor.execute(sql_delete)
+conexao.commit()
